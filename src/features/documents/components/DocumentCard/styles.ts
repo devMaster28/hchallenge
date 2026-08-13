@@ -16,6 +16,11 @@ export default StyleSheet.create({
     paddingHorizontal: spacing.xl,
     paddingVertical: spacing.lg,
   },
+  gridCard: {
+    flex: 1,
+    minHeight: 118,
+    justifyContent: 'center',
+  },
   heading: {
     flexDirection: 'row',
     alignItems: 'baseline',
@@ -36,9 +41,14 @@ export default StyleSheet.create({
   column: {
     flex: 1,
   },
+  sectionHeading: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    marginBottom: spacing.sm,
+  },
   sectionTitle: {
     ...textStyles.subtitle,
-    marginBottom: spacing.sm,
   },
   value: {
     ...textStyles.base,

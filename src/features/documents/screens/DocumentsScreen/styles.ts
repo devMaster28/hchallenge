@@ -13,27 +13,22 @@ export default StyleSheet.create({
     flex: 1,
     backgroundColor: colors.white,
   },
-  header: {
-    minHeight: sizes.headerHeight,
-    justifyContent: 'center',
-    paddingHorizontal: spacing.xxl,
-    backgroundColor: colors.white,
-  },
-  headerTitle: {
-    ...textStyles.screenTitle,
-  },
   content: {
     flex: 1,
-    backgroundColor: colors.lightGray,
+    backgroundColor: colors.background,
   },
   listContent: {
-    padding: spacing.xl,
+    paddingHorizontal: spacing.xl,
+    paddingBottom: spacing.xl,
   },
   emptyListContent: {
     flexGrow: 1,
   },
   separator: {
     height: spacing.lg,
+  },
+  gridRow: {
+    gap: spacing.md,
   },
   feedback: {
     flex: 1,
@@ -56,10 +51,44 @@ export default StyleSheet.create({
     justifyContent: 'center',
     marginTop: spacing.xl,
     borderRadius: radii.md,
-    backgroundColor: colors.black,
+    backgroundColor: colors.primary,
     paddingHorizontal: spacing.xxl,
   },
   retryText: {
     ...textStyles.button,
+  },
+  notificationButton: {
+    width: sizes.minimumTouchTarget,
+    height: sizes.minimumTouchTarget,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: radii.md,
+    backgroundColor: colors.white,
+  },
+  badge: {
+    position: 'absolute',
+    top: 4,
+    right: 4,
+    minWidth: 16,
+    height: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: radii.round,
+    backgroundColor: colors.primary,
+    paddingHorizontal: 4,
+  },
+  badgeText: {
+    color: colors.white,
+    fontSize: 10,
+    fontWeight: '700',
+    lineHeight: 13,
+  },
+  footer: {
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
+    backgroundColor: colors.white,
+    padding: spacing.lg,
   },
 });

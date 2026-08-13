@@ -1,10 +1,12 @@
 import { StyleSheet } from 'react-native';
 
 export const colors = {
+  primary: '#4385F5',
   white: '#FFFFFF',
   black: '#202A3A',
   gray: '#747E8F',
-  lightGray: '#F4F5F7',
+  border: '#D1D5DB',
+  background: '#F4F5F7',
 } as const;
 
 export const spacing = {
@@ -18,11 +20,13 @@ export const spacing = {
 
 export const radii = {
   md: 8,
+  round: 999,
 } as const;
 
 export const sizes = {
   headerHeight: 104,
   minimumTouchTarget: 44,
+  icon: 22,
 } as const;
 
 export const shadows = {

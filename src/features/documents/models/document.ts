@@ -1,3 +1,8 @@
+export enum ViewMode {
+  List = 'list',
+  Grid = 'grid',
+}
+
 type OptionalNullableFields<T> = {
   [Property in keyof T]?: T[Property] | null;
 };
