@@ -10,9 +10,14 @@ interface GetDocumentsState {
   error: Error | null;
 }
 
-export const useGetDocuments = (): GetDocumentsState & {
+interface UseGetDocumentsResult {
+  response: Document[];
+  isLoading: boolean;
+  error: Error | null;
   refetch: () => void;
-} => {
+}
+
+export const useGetDocuments = (): UseGetDocumentsResult => {
   const [state, setState] = useState<GetDocumentsState>({
     response: [],
     isLoading: true,
@@ -28,7 +33,11 @@ export const useGetDocuments = (): GetDocumentsState & {
     get<Document[]>(endpoints.documents)
       .then(response => {
         if (active) {
-          setState({ response, isLoading: false, error: null });
+          setState({
+            response,
+            isLoading: false,
+            error: null,
+          });
         }
       })
       .catch(reason => {
@@ -48,5 +57,8 @@ export const useGetDocuments = (): GetDocumentsState & {
     setRequest(current => current + 1);
   }, []);
 
-  return { ...state, refetch };
+  return {
+    ...state,
+    refetch,
+  };
 };

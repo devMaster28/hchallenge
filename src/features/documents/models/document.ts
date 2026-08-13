@@ -24,3 +24,9 @@ interface DocumentContract {
 
 export type Contributor = OptionalNullableFields<ContributorContract>;
 export type Document = OptionalNullableFields<DocumentContract>;
+
+export interface CreateDocumentInput {
+  title: string;
+  version: string;
+  attachmentName: string;
+}

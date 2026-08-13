@@ -11,13 +11,19 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import Header from '../../../../components/Header';
 import PrimaryButton from '../../../../components/PrimaryButton';
+import AddDocumentModal from '../../components/AddDocumentModal';
 import DocumentCard from '../../components/DocumentCard';
 import DocumentsToolbar from '../../components/DocumentsToolbar';
 import { useGetDocuments } from '../../hooks/useGetDocuments';
-import { Document, ViewMode } from '../../models/document';
+import {
+  CreateDocumentInput,
+  Document,
+  ViewMode,
+} from '../../models/document';
 import { colors, sizes } from '../../../../theme';
 import styles from './styles';
 
+const ListSeparator = () => <View style={styles.separator} />;
 
 const toTimestamp = (date?: string | null): number => {
   if (!date) {
@@ -30,11 +36,29 @@ const toTimestamp = (date?: string | null): number => {
 
 export default function DocumentsScreen() {
   const [viewMode, setViewMode] = useState(ViewMode.List);
-  const { response, isLoading, error, refetch } = useGetDocuments();
-  const documents = [...response].sort(
+  const [isAddDocumentOpen, setIsAddDocumentOpen] = useState(false);
+  const [localDocuments, setLocalDocuments] = useState<Document[]>([]);
+  const { response: remoteDocuments, isLoading, error, refetch } =
+    useGetDocuments();
+  const documents = [...localDocuments, ...remoteDocuments].sort(
     (first, second) =>
       toTimestamp(second.CreatedAt) - toTimestamp(first.CreatedAt),
   );
+
+  const addDocument = (document: CreateDocumentInput) => {
+    const createdAt = new Date().toISOString();
+    const localDocument: Document = {
+      ID: `local-${Date.now()}`,
+      CreatedAt: createdAt,
+      UpdatedAt: createdAt,
+      Title: document.title,
+      Version: document.version,
+      Attachments: [document.attachmentName],
+      Contributors: [],
+    };
+
+    setLocalDocuments(current => [localDocument, ...current]);
+  };
 
   const renderDocument = ({ item }: { item: Document }) => (
     <DocumentCard document={item} variant={viewMode} />
@@ -65,12 +89,12 @@ export default function DocumentsScreen() {
           viewMode={viewMode}
         />
 
-        {isLoading ? (
+        {isLoading && documents.length === 0 ? (
           <View style={styles.feedback} testID="documents-loading">
             <ActivityIndicator color={colors.primary} size="large" />
             <Text style={styles.feedbackText}>Loading documents…</Text>
           </View>
-        ) : error ? (
+        ) : error && documents.length === 0 ? (
           <View style={styles.feedback} testID="documents-error">
             <Text style={styles.feedbackTitle}>Unable to load documents</Text>
             <Text style={styles.feedbackText}>
@@ -95,7 +119,7 @@ export default function DocumentsScreen() {
                 : styles.listContent
             }
             data={documents}
-            ItemSeparatorComponent={<View style={styles.separator} />}
+            ItemSeparatorComponent={ListSeparator}
             keyExtractor={(document, index) =>
               document.ID ?? `document-${index}`
             }
@@ -118,11 +142,17 @@ export default function DocumentsScreen() {
 
       <View style={styles.footer}>
         <PrimaryButton
-          disabled
           icon={<Plus color={colors.white} size={sizes.icon} strokeWidth={2} />}
           label="Add document"
+          onPress={() => setIsAddDocumentOpen(true)}
         />
       </View>
+
+      <AddDocumentModal
+        onClose={() => setIsAddDocumentOpen(false)}
+        onSubmit={addDocument}
+        visible={isAddDocumentOpen}
+      />
     </SafeAreaView>
   );
 }

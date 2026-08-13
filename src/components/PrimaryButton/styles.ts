@@ -22,6 +22,9 @@ export default StyleSheet.create({
   buttonPressed: {
     opacity: 0.8,
   },
+  buttonDisabled: {
+    opacity: 0.5,
+  },
   label: {
     ...textStyles.button,
     fontSize: 18,

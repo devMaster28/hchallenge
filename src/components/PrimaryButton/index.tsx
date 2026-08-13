@@ -26,6 +26,7 @@ export default function PrimaryButton({
       style={({ pressed }) => [
         styles.button,
         pressed && styles.buttonPressed,
+        disabled && styles.buttonDisabled,
       ]}>
       {icon}
       <Text style={styles.label}>{label}</Text>
