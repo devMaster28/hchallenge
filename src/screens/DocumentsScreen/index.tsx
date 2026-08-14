@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Bell, Plus } from 'lucide-react-native';
+import { Plus } from 'lucide-react-native';
 import {
   ActivityIndicator,
   FlatList,
@@ -9,15 +9,20 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import Header from '../../../../components/Header';
-import PrimaryButton from '../../../../components/PrimaryButton';
-import AddDocumentModal from '../../components/AddDocumentModal';
-import DocumentCard from '../../components/DocumentCard';
-import DocumentsToolbar from '../../components/DocumentsToolbar';
-import { useGetDocuments } from '../../hooks/useGetDocuments';
-import { Document, ViewMode } from '../../models/document';
-import { useDocuments } from '../../state/DocumentsProvider';
-import { colors, sizes } from '../../../../theme';
+import Header from '../../components/Header';
+import PrimaryButton from '../../components/PrimaryButton';
+import AddDocumentModal from '../../features/documents/components/AddDocumentModal';
+import DocumentCard from '../../features/documents/components/DocumentCard';
+import DocumentsToolbar from '../../features/documents/components/DocumentsToolbar';
+import { useGetDocuments } from '../../features/documents/hooks/useGetDocuments';
+import { ViewMode } from '../../features/documents/models/document';
+import type { Document } from '../../features/documents/models/document';
+import { useDocuments } from '../../features/documents/state/DocumentsProvider';
+import NotificationBanner from '../../features/notifications/components/NotificationBanner';
+import NotificationBell from '../../features/notifications/components/NotificationBell';
+import NotificationsModal from '../../features/notifications/components/NotificationsModal';
+import { useNotifications } from '../../features/notifications/state/NotificationsProvider';
+import { colors, sizes } from '../../theme';
 import styles from './styles';
 
 const ListSeparator = () => <View style={styles.separator} />;
@@ -25,6 +30,7 @@ const ListSeparator = () => <View style={styles.separator} />;
 export default function DocumentsScreen() {
   const [viewMode, setViewMode] = useState(ViewMode.List);
   const [isAddDocumentOpen, setIsAddDocumentOpen] = useState(false);
+  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const { response: remoteDocuments, isLoading, error, refetch } =
     useGetDocuments();
   const {
@@ -33,12 +39,31 @@ export default function DocumentsScreen() {
     addLocalDocument,
     setRemoteDocuments,
   } = useDocuments();
+  const {
+    notifications,
+    latestNotification,
+    unreadCount,
+    dismissLatestNotification,
+    markAllAsRead,
+  } = useNotifications();
 
   useEffect(() => {
     if (!isLoading && !error) {
       setRemoteDocuments(remoteDocuments);
     }
   }, [error, isLoading, remoteDocuments, setRemoteDocuments]);
+
+  useEffect(() => {
+    if (isNotificationsOpen) {
+      markAllAsRead();
+      dismissLatestNotification();
+    }
+  }, [
+    dismissLatestNotification,
+    isNotificationsOpen,
+    notifications.length,
+    markAllAsRead,
+  ]);
 
   const renderDocument = ({ item }: { item: Document }) => (
     <DocumentCard document={item} variant={viewMode} />
@@ -48,20 +73,25 @@ export default function DocumentsScreen() {
     <SafeAreaView edges={['top']} style={styles.screen}>
       <Header
         rightElement={
-          <Pressable
-            accessibilityLabel="Notifications"
-            accessibilityRole="button"
-            accessibilityState={{ disabled: true }}
-            disabled
-            style={styles.notificationButton}>
-            <Bell color={colors.gray} size={sizes.icon} strokeWidth={2} />
-            <View style={styles.badge}>
-              <Text style={styles.badgeText}>1</Text>
-            </View>
-          </Pressable>
+          <NotificationBell
+            onPress={() => {
+              dismissLatestNotification();
+              setIsNotificationsOpen(true);
+            }}
+            unreadCount={unreadCount}
+          />
         }
         title="Documents"
       />
+
+      {latestNotification && !isNotificationsOpen && (
+        <View style={styles.notificationBannerContainer}>
+          <NotificationBanner
+            notification={latestNotification}
+            onDismiss={dismissLatestNotification}
+          />
+        </View>
+      )}
 
       <View style={styles.content}>
         <DocumentsToolbar
@@ -132,6 +162,12 @@ export default function DocumentsScreen() {
         onClose={() => setIsAddDocumentOpen(false)}
         onSubmit={addLocalDocument}
         visible={isAddDocumentOpen}
+      />
+
+      <NotificationsModal
+        notifications={notifications}
+        onClose={() => setIsNotificationsOpen(false)}
+        visible={isNotificationsOpen}
       />
     </SafeAreaView>
   );

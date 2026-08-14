@@ -1,16 +1,19 @@
 import { StatusBar } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
-import DocumentsScreen from './src/features/documents/screens/DocumentsScreen';
 import DocumentsProvider from './src/features/documents/state/DocumentsProvider';
+import NotificationsProvider from './src/features/notifications/state/NotificationsProvider';
+import DocumentsScreen from './src/screens/DocumentsScreen';
 
 export default function App() {
   return (
     <DocumentsProvider>
-      <SafeAreaProvider>
-        <StatusBar barStyle="dark-content" />
-        <DocumentsScreen />
-      </SafeAreaProvider>
+      <NotificationsProvider>
+        <SafeAreaProvider>
+          <StatusBar barStyle="dark-content" />
+          <DocumentsScreen />
+        </SafeAreaProvider>
+      </NotificationsProvider>
     </DocumentsProvider>
   );
 }

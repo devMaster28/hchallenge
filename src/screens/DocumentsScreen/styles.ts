@@ -6,7 +6,7 @@ import {
   sizes,
   spacing,
   textStyles,
-} from '../../../../theme';
+} from '../../theme';
 
 export default StyleSheet.create({
   screen: {
@@ -57,33 +57,12 @@ export default StyleSheet.create({
   retryText: {
     ...textStyles.button,
   },
-  notificationButton: {
-    width: sizes.minimumTouchTarget,
-    height: sizes.minimumTouchTarget,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: radii.md,
-    backgroundColor: colors.white,
-  },
-  badge: {
+  notificationBannerContainer: {
     position: 'absolute',
-    top: 4,
-    right: 4,
-    minWidth: 16,
-    height: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: radii.round,
-    backgroundColor: colors.primary,
-    paddingHorizontal: 4,
-  },
-  badgeText: {
-    color: colors.white,
-    fontSize: 10,
-    fontWeight: '700',
-    lineHeight: 13,
+    top: sizes.headerHeight,
+    right: spacing.lg,
+    left: spacing.lg,
+    zIndex: 1,
   },
   footer: {
     borderTopWidth: 1,
