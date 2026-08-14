@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import { Document } from '../models/document';
-import { get } from '../../../services/Api';
-import { endpoints } from '../../../services/endpoints';
+import type { Document } from '../models/document';
+import { get } from '../../../services/network/Api';
+import { endpoints } from '../../../services/network/endpoints';
 
 interface GetDocumentsState {
   response: Document[];

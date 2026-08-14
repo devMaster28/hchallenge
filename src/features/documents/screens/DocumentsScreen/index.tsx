@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Bell, Plus } from 'lucide-react-native';
 import {
   ActivityIndicator,
@@ -15,50 +15,30 @@ import AddDocumentModal from '../../components/AddDocumentModal';
 import DocumentCard from '../../components/DocumentCard';
 import DocumentsToolbar from '../../components/DocumentsToolbar';
 import { useGetDocuments } from '../../hooks/useGetDocuments';
-import {
-  CreateDocumentInput,
-  Document,
-  ViewMode,
-} from '../../models/document';
+import { Document, ViewMode } from '../../models/document';
+import { useDocuments } from '../../state/DocumentsProvider';
 import { colors, sizes } from '../../../../theme';
 import styles from './styles';
 
 const ListSeparator = () => <View style={styles.separator} />;
 
-const toTimestamp = (date?: string | null): number => {
-  if (!date) {
-    return Number.NEGATIVE_INFINITY;
-  }
-
-  const timestamp = Date.parse(date);
-  return Number.isNaN(timestamp) ? Number.NEGATIVE_INFINITY : timestamp;
-};
-
 export default function DocumentsScreen() {
   const [viewMode, setViewMode] = useState(ViewMode.List);
   const [isAddDocumentOpen, setIsAddDocumentOpen] = useState(false);
-  const [localDocuments, setLocalDocuments] = useState<Document[]>([]);
   const { response: remoteDocuments, isLoading, error, refetch } =
     useGetDocuments();
-  const documents = [...localDocuments, ...remoteDocuments].sort(
-    (first, second) =>
-      toTimestamp(second.CreatedAt) - toTimestamp(first.CreatedAt),
-  );
+  const {
+    documents,
+    isHydrating,
+    addLocalDocument,
+    setRemoteDocuments,
+  } = useDocuments();
 
-  const addDocument = (document: CreateDocumentInput) => {
-    const createdAt = new Date().toISOString();
-    const localDocument: Document = {
-      ID: `local-${Date.now()}`,
-      CreatedAt: createdAt,
-      UpdatedAt: createdAt,
-      Title: document.title,
-      Version: document.version,
-      Attachments: [document.attachmentName],
-      Contributors: [],
-    };
-
-    setLocalDocuments(current => [localDocument, ...current]);
-  };
+  useEffect(() => {
+    if (!isLoading && !error) {
+      setRemoteDocuments(remoteDocuments);
+    }
+  }, [error, isLoading, remoteDocuments, setRemoteDocuments]);
 
   const renderDocument = ({ item }: { item: Document }) => (
     <DocumentCard document={item} variant={viewMode} />
@@ -89,12 +69,12 @@ export default function DocumentsScreen() {
           viewMode={viewMode}
         />
 
-        {isLoading && documents.length === 0 ? (
+        {(isHydrating || isLoading) && documents.length === 0 ? (
           <View style={styles.feedback} testID="documents-loading">
             <ActivityIndicator color={colors.primary} size="large" />
             <Text style={styles.feedbackText}>Loading documents…</Text>
           </View>
-        ) : error && documents.length === 0 ? (
+        ) : !isHydrating && error && documents.length === 0 ? (
           <View style={styles.feedback} testID="documents-error">
             <Text style={styles.feedbackTitle}>Unable to load documents</Text>
             <Text style={styles.feedbackText}>
@@ -150,7 +130,7 @@ export default function DocumentsScreen() {
 
       <AddDocumentModal
         onClose={() => setIsAddDocumentOpen(false)}
-        onSubmit={addDocument}
+        onSubmit={addLocalDocument}
         visible={isAddDocumentOpen}
       />
     </SafeAreaView>
