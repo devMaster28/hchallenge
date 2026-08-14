@@ -1,11 +1,9 @@
+import type { OptionalNullableFields } from '../../../types/utility';
+
 export enum ViewMode {
   List = 'list',
   Grid = 'grid',
 }
-
-type OptionalNullableFields<T> = {
-  [Property in keyof T]?: T[Property] | null;
-};
 
 interface ContributorContract {
   ID: string;

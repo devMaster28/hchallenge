@@ -11,6 +11,7 @@ import {
 
 import { asyncStorageDocumentsService } from '../../../../services/storage';
 import type { DocumentsStorageService } from '../../../../services/storage';
+import { toError } from '../../../../utils/error';
 import type { CreateDocumentInput, Document } from '../../models/document';
 import {
   documentsActions,
@@ -58,9 +59,7 @@ export default function DocumentsProvider({
       })
       .catch(reason => {
         if (active) {
-          const error =
-            reason instanceof Error ? reason : new Error('Unknown error');
-          dispatch(documentsActions.hydrationFailed(error));
+          dispatch(documentsActions.hydrationFailed(toError(reason)));
         }
       });
 
@@ -87,9 +86,7 @@ export default function DocumentsProvider({
           return;
         }
 
-        const error =
-          reason instanceof Error ? reason : new Error('Unknown error');
-        dispatch(documentsActions.storageFailed(error));
+        dispatch(documentsActions.storageFailed(toError(reason)));
       });
 
     return () => {

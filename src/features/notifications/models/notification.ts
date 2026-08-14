@@ -1,6 +1,4 @@
-type OptionalNullableFields<T> = {
-  [Property in keyof T]?: T[Property] | null;
-};
+import type { OptionalNullableFields } from '../../../types/utility';
 
 interface DocumentNotificationContract {
   Timestamp: string;

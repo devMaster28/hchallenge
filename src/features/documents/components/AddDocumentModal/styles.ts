@@ -3,55 +3,17 @@ import { StyleSheet } from 'react-native';
 import {
   colors,
   radii,
-  sizes,
   spacing,
   textStyles,
 } from '../../../../theme';
 
 export default StyleSheet.create({
-  overlay: {
-    flex: 1,
-    justifyContent: 'flex-end',
-  },
-  backdrop: {
-    position: 'absolute',
-    top: 0,
-    right: 0,
-    bottom: 0,
-    left: 0,
-    backgroundColor: colors.black,
-    opacity: 0.32,
-  },
-  sheet: {
-    maxHeight: '88%',
-    borderTopLeftRadius: radii.md,
-    borderTopRightRadius: radii.md,
-    backgroundColor: colors.white,
-    overflow: 'hidden',
-  },
   form: {
     padding: spacing.xxl,
   },
-  heading: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: spacing.xxl,
-  },
-  title: {
-    ...textStyles.screenTitle,
-    fontSize: 28,
-    lineHeight: 34,
-  },
-  closeButton: {
-    width: sizes.minimumTouchTarget,
-    height: sizes.minimumTouchTarget,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   subtitle: {
     ...textStyles.title,
-    marginBottom: spacing.xxl,
+    marginBottom: spacing.xl,
   },
   field: {
     marginBottom: spacing.xl,

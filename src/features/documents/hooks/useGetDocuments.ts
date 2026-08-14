@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from 'react';
 import type { Document } from '../models/document';
 import { get } from '../../../services/network/Api';
 import { endpoints } from '../../../services/network/endpoints';
+import { toError } from '../../../utils/error';
 
 interface GetDocumentsState {
   response: Document[];
@@ -42,9 +43,11 @@ export const useGetDocuments = (): UseGetDocumentsResult => {
       })
       .catch(reason => {
         if (active) {
-          const error =
-            reason instanceof Error ? reason : new Error('Unknown error');
-          setState(current => ({ ...current, isLoading: false, error }));
+          setState(current => ({
+            ...current,
+            isLoading: false,
+            error: toError(reason),
+          }));
         }
       });
 

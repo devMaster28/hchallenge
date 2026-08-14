@@ -1,20 +1,11 @@
-
 export const get = async <Response>(
   endpoint: string,
 ): Promise<Response> => {
-  
-  try {
-    const response = await fetch(endpoint, {
-      method: 'GET',
-    });
+  const response = await fetch(endpoint);
 
-    if (!response.ok) {
-      throw new Error(`Request failed with status ${response.status}`);
-    }
-    return response.json() as Promise<Response>;
-    
-  }catch (error) {
-    throw (error);
+  if (!response.ok) {
+    throw new Error(`Request failed with status ${response.status}`);
   }
-  
+
+  return response.json() as Promise<Response>;
 };

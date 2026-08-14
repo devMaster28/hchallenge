@@ -39,10 +39,4 @@ export default StyleSheet.create({
     ...textStyles.caption,
     marginTop: 2,
   },
-  closeButton: {
-    width: sizes.minimumTouchTarget,
-    height: sizes.minimumTouchTarget,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
 });

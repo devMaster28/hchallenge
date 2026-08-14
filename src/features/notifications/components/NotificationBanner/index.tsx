@@ -1,7 +1,8 @@
 import { Bell, X } from 'lucide-react-native';
 import { useEffect } from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
+import IconButton from '../../../../components/IconButton';
 import { colors, sizes } from '../../../../theme';
 import type { DocumentNotification } from '../../models/notification';
 import styles from './styles';
@@ -58,14 +59,11 @@ export default function NotificationBanner({
           {getNotificationMessage(notification)}
         </Text>
       </View>
-      <Pressable
+      <IconButton
         accessibilityLabel="Dismiss notification"
-        accessibilityRole="button"
-        hitSlop={8}
+        icon={<X color={colors.gray} size={sizes.icon} strokeWidth={2} />}
         onPress={onDismiss}
-        style={styles.closeButton}>
-        <X color={colors.gray} size={sizes.icon} strokeWidth={2} />
-      </Pressable>
+      />
     </View>
   );
 }

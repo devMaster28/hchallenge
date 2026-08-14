@@ -1,3 +1,5 @@
+import { toError } from '../../utils/error';
+
 export enum RealtimeConnectionStatus {
   Connecting = 'connecting',
   Connected = 'connected',
@@ -35,9 +37,6 @@ interface CreateWebSocketServiceOptions<Message> {
 const createNativeWebSocket: WebSocketFactory = url =>
   new WebSocket(url) as unknown as WebSocketLike;
 
-const toError = (reason: unknown): Error =>
-  reason instanceof Error ? reason : new Error('Unknown realtime error');
-
 export const createWebSocketService = <Message>(
   {
     url,
@@ -54,7 +53,7 @@ export const createWebSocketService = <Message>(
     let socket: WebSocketLike | null = null;
 
     const notifyError = (reason: unknown) => {
-      handlers.onError?.(toError(reason));
+      handlers.onError?.(toError(reason, 'Unknown realtime error'));
     };
 
     const openConnection = () => {

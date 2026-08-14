@@ -3,51 +3,13 @@ import { StyleSheet } from 'react-native';
 import {
   colors,
   radii,
-  sizes,
   spacing,
   textStyles,
 } from '../../../../theme';
 
 export default StyleSheet.create({
-  overlay: {
+  list: {
     flex: 1,
-    justifyContent: 'flex-end',
-  },
-  backdrop: {
-    position: 'absolute',
-    top: 0,
-    right: 0,
-    bottom: 0,
-    left: 0,
-    backgroundColor: colors.black,
-    opacity: 0.32,
-  },
-  sheet: {
-    height: '70%',
-    borderTopLeftRadius: radii.md,
-    borderTopRightRadius: radii.md,
-    backgroundColor: colors.white,
-    overflow: 'hidden',
-  },
-  heading: {
-    minHeight: 80,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
-    paddingHorizontal: spacing.xxl,
-  },
-  title: {
-    ...textStyles.screenTitle,
-    fontSize: 28,
-    lineHeight: 34,
-  },
-  closeButton: {
-    width: sizes.minimumTouchTarget,
-    height: sizes.minimumTouchTarget,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   listContent: {
     padding: spacing.xxl,
