@@ -93,17 +93,7 @@ export const documentsReducer = (
   }
 };
 
-const toTimestamp = (date?: string | null): number => {
-  if (!date) {
-    return Number.NEGATIVE_INFINITY;
-  }
-
-  const timestamp = Date.parse(date);
-  return Number.isNaN(timestamp) ? Number.NEGATIVE_INFINITY : timestamp;
-};
-
-export const selectDocuments = (state: DocumentsState): Document[] =>
-  [...state.localDocuments, ...state.remoteDocuments].sort(
-    (first, second) =>
-      toTimestamp(second.CreatedAt) - toTimestamp(first.CreatedAt),
-  );
+export const selectDocuments = (state: DocumentsState): Document[] => [
+  ...state.localDocuments,
+  ...state.remoteDocuments,
+];

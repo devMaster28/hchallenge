@@ -1,12 +1,6 @@
 import { StyleSheet } from 'react-native';
 
-import {
-  colors,
-  radii,
-  sizes,
-  spacing,
-  textStyles,
-} from '../../../../theme';
+import { colors, radii, sizes, spacing, textStyles } from '../../../../theme';
 
 export default StyleSheet.create({
   toolbar: {
@@ -18,6 +12,7 @@ export default StyleSheet.create({
   },
   sortButton: {
     minHeight: sizes.minimumTouchTarget,
+    maxWidth: 176,
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
@@ -26,13 +21,18 @@ export default StyleSheet.create({
     backgroundColor: colors.white,
     overflow: 'hidden',
   },
+  sortButtonPressed: {
+    backgroundColor: colors.background,
+  },
   sortLabel: {
+    flexShrink: 1,
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.sm,
     paddingHorizontal: spacing.md,
   },
   sortText: {
+    flexShrink: 1,
     ...textStyles.subtitle,
   },
   sortChevron: {

@@ -5,6 +5,13 @@ export enum ViewMode {
   Grid = 'grid',
 }
 
+export enum DocumentSortOption {
+  Default = 'default',
+  Date = 'date',
+  Version = 'version',
+  Alphabetical = 'alphabetical',
+}
+
 interface ContributorContract {
   ID: string;
   Name: string;

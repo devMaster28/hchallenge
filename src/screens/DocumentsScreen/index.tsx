@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Plus } from 'lucide-react-native';
 import {
   ActivityIndicator,
@@ -16,9 +16,13 @@ import AddDocumentModal from '../../features/documents/components/AddDocumentMod
 import DocumentCard from '../../features/documents/components/DocumentCard';
 import DocumentsToolbar from '../../features/documents/components/DocumentsToolbar';
 import { useGetDocuments } from '../../features/documents/hooks/useGetDocuments';
-import { ViewMode } from '../../features/documents/models/document';
+import {
+  DocumentSortOption,
+  ViewMode,
+} from '../../features/documents/models/document';
 import type { Document } from '../../features/documents/models/document';
 import { useDocuments } from '../../features/documents/state/DocumentsProvider';
+import { sortDocuments } from '../../features/documents/utils/sortDocuments';
 import NotificationBanner from '../../features/notifications/components/NotificationBanner';
 import NotificationBell from '../../features/notifications/components/NotificationBell';
 import NotificationsModal from '../../features/notifications/components/NotificationsModal';
@@ -30,17 +34,18 @@ const ListSeparator = () => <View style={styles.separator} />;
 
 export default function DocumentsScreen() {
   const [viewMode, setViewMode] = useState(ViewMode.List);
+  const [sortOption, setSortOption] = useState(DocumentSortOption.Default);
   const [isAddDocumentOpen, setIsAddDocumentOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const { response: remoteDocuments, isLoading, error, refetch } =
-    useGetDocuments();
   const {
-    documents,
-    isHydrating,
-    addLocalDocument,
-    setRemoteDocuments,
-  } = useDocuments();
+    response: remoteDocuments,
+    isLoading,
+    error,
+    refetch,
+  } = useGetDocuments();
+  const { documents, isHydrating, addLocalDocument, setRemoteDocuments } =
+    useDocuments();
   const {
     notifications,
     latestNotification,
@@ -77,13 +82,17 @@ export default function DocumentsScreen() {
     <DocumentCard document={item} variant={viewMode} />
   );
 
+  const sortedDocuments = useMemo(
+    () => sortDocuments(documents, sortOption),
+    [documents, sortOption],
+  );
+
   const handleRefresh = () => {
     setIsRefreshing(true);
     refetch();
   };
   const showInitialLoading =
-    documents.length === 0 &&
-    (isHydrating || (isLoading && !isRefreshing));
+    documents.length === 0 && (isHydrating || (isLoading && !isRefreshing));
 
   return (
     <SafeAreaView edges={['top']} style={styles.screen}>
@@ -111,7 +120,9 @@ export default function DocumentsScreen() {
 
       <View style={styles.content}>
         <DocumentsToolbar
+          onSortOptionChange={setSortOption}
           onViewModeChange={setViewMode}
+          sortOption={sortOption}
           viewMode={viewMode}
         />
 
@@ -130,7 +141,8 @@ export default function DocumentsScreen() {
               accessibilityLabel="Try again"
               accessibilityRole="button"
               onPress={refetch}
-              style={styles.retryButton}>
+              style={styles.retryButton}
+            >
               <Text style={styles.retryText}>Try again</Text>
             </Pressable>
           </View>
@@ -144,7 +156,7 @@ export default function DocumentsScreen() {
                 ? styles.emptyListContent
                 : styles.listContent
             }
-            data={documents}
+            data={sortedDocuments}
             ItemSeparatorComponent={ListSeparator}
             keyExtractor={(document, index) =>
               document.ID ?? `document-${index}`
