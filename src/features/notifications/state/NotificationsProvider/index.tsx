@@ -17,7 +17,7 @@ import {
 } from '../../../../services/realtime';
 import type { RealtimeService } from '../../../../services/realtime';
 import { toError } from '../../../../utils/error';
-import { parseDocumentNotification } from '../../models/notification';
+import { parseDocumentNotificationDto } from '../../dto/documentNotificationDto';
 import type { DocumentNotification } from '../../models/notification';
 import { buildLocalNotification } from '../../utils/buildLocalNotification';
 import {
@@ -46,7 +46,7 @@ interface NotificationsProviderProps {
 const documentNotificationsService =
   createWebSocketService<DocumentNotification>({
     url: endpoints.notifications,
-    parseMessage: parseDocumentNotification,
+    parseMessage: parseDocumentNotificationDto,
   });
 
 const NotificationsContext = createContext<NotificationsContextValue | null>(

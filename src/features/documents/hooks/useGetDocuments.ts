@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 
+import { parseDocumentsResponse } from '../dto/documentDto';
 import type { Document } from '../models/document';
 import { get } from '../../../services/network/Api';
 import { endpoints } from '../../../services/network/endpoints';
@@ -31,7 +32,8 @@ export const useGetDocuments = (): UseGetDocumentsResult => {
 
     setState(current => ({ ...current, isLoading: true, error: null }));
 
-    get<Document[]>(endpoints.documents)
+    get(endpoints.documents)
+      .then(parseDocumentsResponse)
       .then(response => {
         if (active) {
           setState({
