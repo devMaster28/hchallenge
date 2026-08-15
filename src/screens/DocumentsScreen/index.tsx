@@ -4,6 +4,7 @@ import {
   ActivityIndicator,
   FlatList,
   Pressable,
+  RefreshControl,
   Text,
   View,
 } from 'react-native';
@@ -31,6 +32,7 @@ export default function DocumentsScreen() {
   const [viewMode, setViewMode] = useState(ViewMode.List);
   const [isAddDocumentOpen, setIsAddDocumentOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const { response: remoteDocuments, isLoading, error, refetch } =
     useGetDocuments();
   const {
@@ -54,6 +56,12 @@ export default function DocumentsScreen() {
   }, [error, isLoading, remoteDocuments, setRemoteDocuments]);
 
   useEffect(() => {
+    if (!isLoading) {
+      setIsRefreshing(false);
+    }
+  }, [isLoading]);
+
+  useEffect(() => {
     if (isNotificationsOpen) {
       markAllAsRead();
       dismissLatestNotification();
@@ -68,6 +76,14 @@ export default function DocumentsScreen() {
   const renderDocument = ({ item }: { item: Document }) => (
     <DocumentCard document={item} variant={viewMode} />
   );
+
+  const handleRefresh = () => {
+    setIsRefreshing(true);
+    refetch();
+  };
+  const showInitialLoading =
+    documents.length === 0 &&
+    (isHydrating || (isLoading && !isRefreshing));
 
   return (
     <SafeAreaView edges={['top']} style={styles.screen}>
@@ -99,7 +115,7 @@ export default function DocumentsScreen() {
           viewMode={viewMode}
         />
 
-        {(isHydrating || isLoading) && documents.length === 0 ? (
+        {showInitialLoading ? (
           <View style={styles.feedback} testID="documents-loading">
             <ActivityIndicator color={colors.primary} size="large" />
             <Text style={styles.feedbackText}>Loading documents…</Text>
@@ -141,6 +157,14 @@ export default function DocumentsScreen() {
                   New documents will appear here.
                 </Text>
               </View>
+            }
+            refreshControl={
+              <RefreshControl
+                colors={[colors.primary]}
+                onRefresh={handleRefresh}
+                refreshing={isRefreshing}
+                tintColor={colors.primary}
+              />
             }
             renderItem={renderDocument}
             numColumns={viewMode === ViewMode.Grid ? 2 : 1}
