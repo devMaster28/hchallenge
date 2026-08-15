@@ -6,7 +6,6 @@ export enum ViewMode {
 }
 
 export enum DocumentSortOption {
-  Default = 'default',
   Date = 'date',
   Version = 'version',
   Alphabetical = 'alphabetical',

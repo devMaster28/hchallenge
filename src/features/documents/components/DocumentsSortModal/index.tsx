@@ -15,11 +15,6 @@ interface DocumentsSortModalProps {
 
 const options = [
   {
-    value: DocumentSortOption.Default,
-    label: 'Default',
-    description: 'Backend order',
-  },
-  {
     value: DocumentSortOption.Date,
     label: 'Date',
     description: 'Newest to oldest',
@@ -37,7 +32,7 @@ const options = [
 ] as const;
 
 export const getDocumentSortLabel = (option: DocumentSortOption): string =>
-  options.find(item => item.value === option)?.label ?? 'Default';
+  options.find(item => item.value === option)?.label ?? 'Date';
 
 export default function DocumentsSortModal({
   selectedOption,

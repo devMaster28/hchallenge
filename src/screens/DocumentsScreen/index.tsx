@@ -34,7 +34,7 @@ const ListSeparator = () => <View style={styles.separator} />;
 
 export default function DocumentsScreen() {
   const [viewMode, setViewMode] = useState(ViewMode.List);
-  const [sortOption, setSortOption] = useState(DocumentSortOption.Default);
+  const [sortOption, setSortOption] = useState(DocumentSortOption.Date);
   const [isAddDocumentOpen, setIsAddDocumentOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);

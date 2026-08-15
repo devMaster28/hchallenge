@@ -69,8 +69,6 @@ export const sortDocuments = (
   const sortedDocuments = [...documents];
 
   switch (option) {
-    case DocumentSortOption.Default:
-      return sortedDocuments;
     case DocumentSortOption.Date:
       return sortedDocuments.sort(compareByDate);
     case DocumentSortOption.Version:

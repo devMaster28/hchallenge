@@ -23,10 +23,7 @@ export default function DocumentsToolbar({
   onViewModeChange,
 }: DocumentsToolbarProps) {
   const [isSortModalOpen, setIsSortModalOpen] = useState(false);
-  const sortLabel =
-    sortOption === DocumentSortOption.Default
-      ? 'Sort by'
-      : getDocumentSortLabel(sortOption);
+  const sortLabel = getDocumentSortLabel(sortOption);
 
   return (
     <>
@@ -44,11 +41,7 @@ export default function DocumentsToolbar({
         >
           <View style={styles.sortLabel}>
             <ArrowUpDown
-              color={
-                sortOption === DocumentSortOption.Default
-                  ? colors.gray
-                  : colors.primary
-              }
+              color={colors.primary}
               size={sizes.icon}
               strokeWidth={2}
             />
