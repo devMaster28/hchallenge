@@ -1,12 +1,6 @@
 import { StyleSheet } from 'react-native';
 
-import {
-  colors,
-  radii,
-  sizes,
-  spacing,
-  textStyles,
-} from '../../theme';
+import { colors, radii, sizes, spacing, textStyles } from '../../theme';
 
 export default StyleSheet.create({
   screen: {
@@ -56,13 +50,6 @@ export default StyleSheet.create({
   },
   retryText: {
     ...textStyles.button,
-  },
-  notificationBannerContainer: {
-    position: 'absolute',
-    top: sizes.headerHeight,
-    right: spacing.lg,
-    left: spacing.lg,
-    zIndex: 1,
   },
   footer: {
     borderTopWidth: 1,

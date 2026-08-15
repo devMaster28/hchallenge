@@ -28,12 +28,10 @@ import {
 
 interface NotificationsContextValue {
   notifications: DocumentNotification[];
-  latestNotification: DocumentNotification | null;
   unreadCount: number;
   connectionStatus: RealtimeConnectionStatus;
   connectionError: Error | null;
   localNotificationError: Error | null;
-  dismissLatestNotification: () => void;
   markAllAsRead: () => void;
 }
 
@@ -92,10 +90,6 @@ export default function NotificationsProvider({
     [localNotificationsService, realtimeService],
   );
 
-  const dismissLatestNotification = useCallback(() => {
-    dispatch(notificationsActions.dismissLatest());
-  }, []);
-
   const markAllAsRead = useCallback(() => {
     dispatch(notificationsActions.markAllAsRead());
   }, []);
@@ -103,10 +97,9 @@ export default function NotificationsProvider({
   const value = useMemo(
     () => ({
       ...state,
-      dismissLatestNotification,
       markAllAsRead,
     }),
-    [state, dismissLatestNotification, markAllAsRead],
+    [state, markAllAsRead],
   );
 
   return (

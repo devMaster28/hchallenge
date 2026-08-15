@@ -23,7 +23,6 @@ import {
 import type { Document } from '../../features/documents/models/document';
 import { useDocuments } from '../../features/documents/state/DocumentsProvider';
 import { sortDocuments } from '../../features/documents/utils/sortDocuments';
-import NotificationBanner from '../../features/notifications/components/NotificationBanner';
 import NotificationBell from '../../features/notifications/components/NotificationBell';
 import NotificationsModal from '../../features/notifications/components/NotificationsModal';
 import { useNotifications } from '../../features/notifications/state/NotificationsProvider';
@@ -46,13 +45,7 @@ export default function DocumentsScreen() {
   } = useGetDocuments();
   const { documents, isHydrating, addLocalDocument, setRemoteDocuments } =
     useDocuments();
-  const {
-    notifications,
-    latestNotification,
-    unreadCount,
-    dismissLatestNotification,
-    markAllAsRead,
-  } = useNotifications();
+  const { notifications, unreadCount, markAllAsRead } = useNotifications();
 
   useEffect(() => {
     if (!isLoading && !error) {
@@ -69,14 +62,8 @@ export default function DocumentsScreen() {
   useEffect(() => {
     if (isNotificationsOpen) {
       markAllAsRead();
-      dismissLatestNotification();
     }
-  }, [
-    dismissLatestNotification,
-    isNotificationsOpen,
-    notifications.length,
-    markAllAsRead,
-  ]);
+  }, [isNotificationsOpen, notifications.length, markAllAsRead]);
 
   const renderDocument = ({ item }: { item: Document }) => (
     <DocumentCard document={item} variant={viewMode} />
@@ -99,24 +86,12 @@ export default function DocumentsScreen() {
       <Header
         rightElement={
           <NotificationBell
-            onPress={() => {
-              dismissLatestNotification();
-              setIsNotificationsOpen(true);
-            }}
+            onPress={() => setIsNotificationsOpen(true)}
             unreadCount={unreadCount}
           />
         }
         title="Documents"
       />
-
-      {latestNotification && !isNotificationsOpen && (
-        <View style={styles.notificationBannerContainer}>
-          <NotificationBanner
-            notification={latestNotification}
-            onDismiss={dismissLatestNotification}
-          />
-        </View>
-      )}
 
       <View style={styles.content}>
         <DocumentsToolbar

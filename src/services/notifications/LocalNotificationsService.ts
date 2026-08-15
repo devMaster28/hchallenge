@@ -1,4 +1,5 @@
 export interface LocalNotification {
+  id?: string;
   title: string;
   body: string;
   data?: Record<string, string>;

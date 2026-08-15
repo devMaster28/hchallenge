@@ -5,7 +5,6 @@ const MAX_NOTIFICATIONS = 50;
 
 export interface NotificationsState {
   notifications: DocumentNotification[];
-  latestNotification: DocumentNotification | null;
   unreadCount: number;
   connectionStatus: RealtimeConnectionStatus;
   connectionError: Error | null;
@@ -14,7 +13,6 @@ export interface NotificationsState {
 
 export const initialNotificationsState: NotificationsState = {
   notifications: [],
-  latestNotification: null,
   unreadCount: 0,
   connectionStatus: RealtimeConnectionStatus.Disconnected,
   connectionError: null,
@@ -23,7 +21,6 @@ export const initialNotificationsState: NotificationsState = {
 
 export enum NotificationsActionType {
   Received = 'received',
-  DismissLatest = 'dismissLatest',
   MarkAllAsRead = 'markAllAsRead',
   ConnectionChanged = 'connectionChanged',
   ConnectionFailed = 'connectionFailed',
@@ -34,9 +31,6 @@ export const notificationsActions = {
   received: (notification: DocumentNotification) => ({
     type: NotificationsActionType.Received as const,
     payload: notification,
-  }),
-  dismissLatest: () => ({
-    type: NotificationsActionType.DismissLatest as const,
   }),
   markAllAsRead: () => ({
     type: NotificationsActionType.MarkAllAsRead as const,
@@ -71,13 +65,7 @@ export const notificationsReducer = (
           0,
           MAX_NOTIFICATIONS,
         ),
-        latestNotification: action.payload,
         unreadCount: state.unreadCount + 1,
-      };
-    case NotificationsActionType.DismissLatest:
-      return {
-        ...state,
-        latestNotification: null,
       };
     case NotificationsActionType.MarkAllAsRead:
       return {

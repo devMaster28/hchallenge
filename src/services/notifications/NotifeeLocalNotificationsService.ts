@@ -8,7 +8,7 @@ import type {
   LocalNotificationsService,
 } from './LocalNotificationsService';
 
-const DOCUMENTS_CHANNEL_ID = 'document-updates';
+const DOCUMENTS_CHANNEL_ID = 'document-updates-silent-v2';
 
 export class NotifeeLocalNotificationsService
   implements LocalNotificationsService
@@ -34,23 +34,24 @@ export class NotifeeLocalNotificationsService
     }
 
     await notifee.displayNotification({
+      id: notification.id,
       title: notification.title,
       body: notification.body,
       data: notification.data,
       android: {
         channelId: DOCUMENTS_CHANNEL_ID,
+        onlyAlertOnce: true,
         pressAction: {
           id: 'default',
         },
         smallIcon: 'ic_launcher',
       },
       ios: {
-        sound: 'default',
         foregroundPresentationOptions: {
-          badge: true,
-          banner: true,
+          badge: false,
+          banner: false,
           list: true,
-          sound: true,
+          sound: false,
         },
       },
     });
@@ -69,8 +70,7 @@ export class NotifeeLocalNotificationsService
       id: DOCUMENTS_CHANNEL_ID,
       name: 'Document updates',
       description: 'Notifications when another user creates a document',
-      importance: AndroidImportance.DEFAULT,
-      sound: 'default',
+      importance: AndroidImportance.LOW,
     });
 
     return true;
