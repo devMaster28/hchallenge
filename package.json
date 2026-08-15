@@ -3,7 +3,6 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "preandroid": "npm run android:reverse",
     "android": "react-native run-android",
     "android:reverse": "adb reverse tcp:8080 tcp:8080",
     "ios": "react-native run-ios",

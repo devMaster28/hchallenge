@@ -19,6 +19,7 @@ export default StyleSheet.create({
   },
   gridCard: {
     flex: 1,
+    maxWidth: '48%',
     minHeight: 118,
   },
   heading: {

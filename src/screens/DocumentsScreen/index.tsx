@@ -161,13 +161,13 @@ export default function DocumentsScreen() {
         )}
       </View>
 
-      <View style={styles.footer}>
+      <SafeAreaView edges={['bottom']} style={styles.footer}>
         <PrimaryButton
           icon={<Plus color={colors.white} size={sizes.icon} strokeWidth={2} />}
           label="Add document"
           onPress={() => setIsAddDocumentOpen(true)}
         />
-      </View>
+      </SafeAreaView>
 
       <AddDocumentModal
         onClose={() => setIsAddDocumentOpen(false)}

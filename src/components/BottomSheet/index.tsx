@@ -9,6 +9,7 @@ import {
   View,
 } from 'react-native';
 import type { DimensionValue } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { colors, sizes } from '../../theme';
 import IconButton from '../IconButton';
@@ -39,35 +40,35 @@ export default function BottomSheet({
       onRequestClose={onClose}
       presentationStyle="overFullScreen"
       transparent
-      visible={visible}>
+      visible={visible}
+    >
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        style={styles.overlay}>
+        style={styles.overlay}
+      >
         <Pressable
           accessibilityLabel={`Close ${title}`}
           onPress={onClose}
           style={styles.backdrop}
         />
 
-        <View
+        <SafeAreaView
           accessibilityViewIsModal
+          edges={['bottom']}
           style={[
             styles.sheet,
             sheetHeight !== undefined && { height: sheetHeight },
-          ]}>
+          ]}
+        >
           <View
-            style={[
-              styles.heading,
-              headerDivider && styles.headingWithDivider,
-            ]}>
+            style={[styles.heading, headerDivider && styles.headingWithDivider]}
+          >
             <Text accessibilityRole="header" style={styles.title}>
               {title}
             </Text>
             <IconButton
               accessibilityLabel="Close"
-              icon={
-                <X color={colors.gray} size={sizes.icon} strokeWidth={2} />
-              }
+              icon={<X color={colors.gray} size={sizes.icon} strokeWidth={2} />}
               onPress={onClose}
             />
           </View>
@@ -76,11 +77,12 @@ export default function BottomSheet({
             style={[
               styles.body,
               sheetHeight !== undefined && styles.expandedBody,
-            ]}>
+            ]}
+          >
             {children}
           </View>
           {footer}
-        </View>
+        </SafeAreaView>
       </KeyboardAvoidingView>
     </Modal>
   );
