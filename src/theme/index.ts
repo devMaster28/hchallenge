@@ -26,6 +26,7 @@ export const radii = {
 export const sizes = {
   headerHeight: 104,
   minimumTouchTarget: 44,
+  smallIcon: 18,
   icon: 22,
 } as const;
 

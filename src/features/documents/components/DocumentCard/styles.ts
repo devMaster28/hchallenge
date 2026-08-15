@@ -4,6 +4,7 @@ import {
   colors,
   radii,
   shadows,
+  sizes,
   spacing,
   textStyles,
 } from '../../../../theme';
@@ -19,20 +20,42 @@ export default StyleSheet.create({
   gridCard: {
     flex: 1,
     minHeight: 118,
-    justifyContent: 'center',
   },
   heading: {
     flexDirection: 'row',
     alignItems: 'baseline',
     flexWrap: 'wrap',
     gap: spacing.sm,
+  },
+  listHeading: {
     marginBottom: spacing.lg,
+    paddingRight: sizes.minimumTouchTarget,
+  },
+  listShareButton: {
+    position: 'absolute',
+    top: spacing.sm,
+    right: spacing.sm,
+    zIndex: 1,
   },
   title: {
     ...textStyles.title,
   },
   version: {
     ...textStyles.caption,
+  },
+  gridFooter: {
+    minHeight: 28,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    marginTop: 'auto',
+  },
+  gridVersion: {
+    flex: 1,
+  },
+  gridShareButton: {
+    width: 28,
+    height: 28,
   },
   details: {
     flexDirection: 'row',

@@ -2,7 +2,9 @@ import { Paperclip, UsersRound } from 'lucide-react-native';
 import { Text, View } from 'react-native';
 
 import { colors, sizes } from '../../../../theme';
-import { Document, ViewMode } from '../../models/document';
+import { ViewMode } from '../../models/document';
+import type { Document } from '../../models/document';
+import DocumentShareButton from '../DocumentShareButton';
 import styles from './styles';
 
 interface DocumentCardProps {
@@ -28,14 +30,43 @@ export default function DocumentCard({
     <View
       accessibilityLabel={document.Title ?? 'Untitled document'}
       style={[styles.card, variant === ViewMode.Grid && styles.gridCard]}>
-      <View style={styles.heading}>
+      {variant === ViewMode.List && (
+        <DocumentShareButton
+          document={document}
+          style={styles.listShareButton}
+        />
+      )}
+
+      <View
+        style={[
+          styles.heading,
+          variant === ViewMode.List && styles.listHeading,
+        ]}>
         <Text numberOfLines={2} style={styles.title}>
           {document.Title ?? 'Untitled document'}
         </Text>
-        <Text style={styles.version}>
-          {document.Version ? `Version ${document.Version}` : 'No version'}
-        </Text>
+        {variant === ViewMode.List && (
+          <Text style={styles.version}>
+            {document.Version ? `Version ${document.Version}` : 'No version'}
+          </Text>
+        )}
       </View>
+
+      {variant === ViewMode.Grid && (
+        <View style={styles.gridFooter}>
+          <Text
+            adjustsFontSizeToFit
+            minimumFontScale={0.8}
+            numberOfLines={1}
+            style={[styles.version, styles.gridVersion]}>
+            {document.Version ? `Version ${document.Version}` : 'No version'}
+          </Text>
+          <DocumentShareButton
+            document={document}
+            style={styles.gridShareButton}
+          />
+        </View>
+      )}
 
       {variant === ViewMode.List && (
         <View style={styles.details}>
