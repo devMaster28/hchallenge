@@ -5,7 +5,10 @@ import { Text, View } from 'react-native';
 import IconButton from '../../../../components/IconButton';
 import { colors, sizes } from '../../../../theme';
 import type { DocumentNotification } from '../../models/notification';
+import { getNotificationMessage } from '../../utils/getNotificationMessage';
 import styles from './styles';
+
+export { getNotificationMessage } from '../../utils/getNotificationMessage';
 
 const DISPLAY_DURATION = 5_000;
 
@@ -13,27 +16,6 @@ interface NotificationBannerProps {
   notification: DocumentNotification;
   onDismiss: () => void;
 }
-
-export const getNotificationMessage = (
-  notification: DocumentNotification,
-): string => {
-  const userName = notification.UserName?.trim();
-  const documentTitle = notification.DocumentTitle?.trim();
-
-  if (userName && documentTitle) {
-    return `${userName} created “${documentTitle}”`;
-  }
-
-  if (documentTitle) {
-    return `A new document “${documentTitle}” was created`;
-  }
-
-  if (userName) {
-    return `${userName} created a new document`;
-  }
-
-  return 'A new document was created';
-};
 
 export default function NotificationBanner({
   notification,
@@ -49,7 +31,8 @@ export default function NotificationBanner({
       accessibilityLiveRegion="polite"
       accessibilityRole="alert"
       style={styles.banner}
-      testID="notification-banner">
+      testID="notification-banner"
+    >
       <View style={styles.iconContainer}>
         <Bell color={colors.primary} size={sizes.icon} strokeWidth={2} />
       </View>

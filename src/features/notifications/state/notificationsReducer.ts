@@ -9,6 +9,7 @@ export interface NotificationsState {
   unreadCount: number;
   connectionStatus: RealtimeConnectionStatus;
   connectionError: Error | null;
+  localNotificationError: Error | null;
 }
 
 export const initialNotificationsState: NotificationsState = {
@@ -17,6 +18,7 @@ export const initialNotificationsState: NotificationsState = {
   unreadCount: 0,
   connectionStatus: RealtimeConnectionStatus.Disconnected,
   connectionError: null,
+  localNotificationError: null,
 };
 
 export enum NotificationsActionType {
@@ -25,6 +27,7 @@ export enum NotificationsActionType {
   MarkAllAsRead = 'markAllAsRead',
   ConnectionChanged = 'connectionChanged',
   ConnectionFailed = 'connectionFailed',
+  LocalNotificationFailed = 'localNotificationFailed',
 }
 
 export const notificationsActions = {
@@ -44,6 +47,10 @@ export const notificationsActions = {
   }),
   connectionFailed: (error: Error) => ({
     type: NotificationsActionType.ConnectionFailed as const,
+    payload: error,
+  }),
+  localNotificationFailed: (error: Error) => ({
+    type: NotificationsActionType.LocalNotificationFailed as const,
     payload: error,
   }),
 };
@@ -90,6 +97,11 @@ export const notificationsReducer = (
       return {
         ...state,
         connectionError: action.payload,
+      };
+    case NotificationsActionType.LocalNotificationFailed:
+      return {
+        ...state,
+        localNotificationError: action.payload,
       };
   }
 };
