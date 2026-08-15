@@ -1,6 +1,7 @@
 import { FlatList, Text, View } from 'react-native';
 
 import BottomSheet from '../../../../components/BottomSheet';
+import { formatRelativeDate } from '../../../../utils/date';
 import type { DocumentNotification } from '../../models/notification';
 import styles from './styles';
 
@@ -11,15 +12,6 @@ interface NotificationsModalProps {
 }
 
 const NotificationSeparator = () => <View style={styles.separator} />;
-
-const formatTimestamp = (timestamp?: string | null): string | null => {
-  if (!timestamp) {
-    return null;
-  }
-
-  const date = new Date(timestamp);
-  return Number.isNaN(date.getTime()) ? null : date.toLocaleString();
-};
 
 export default function NotificationsModal({
   notifications,
@@ -55,7 +47,7 @@ export default function NotificationsModal({
           </View>
         }
         renderItem={({ item }) => {
-          const timestamp = formatTimestamp(item.Timestamp);
+          const timestamp = formatRelativeDate(item.Timestamp);
 
           return (
             <View style={styles.notification}>

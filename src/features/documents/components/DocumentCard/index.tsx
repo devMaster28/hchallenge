@@ -2,6 +2,7 @@ import { Paperclip, UsersRound } from 'lucide-react-native';
 import { Text, View } from 'react-native';
 
 import { colors, sizes } from '../../../../theme';
+import { formatRelativeDate } from '../../../../utils/date';
 import { ViewMode } from '../../models/document';
 import type { Document } from '../../models/document';
 import DocumentShareButton from '../DocumentShareButton';
@@ -25,6 +26,8 @@ export default function DocumentCard({
   const attachments = document.Attachments?.filter(
     (attachment): attachment is string => typeof attachment === 'string',
   ) ?? [];
+  const relativeDate =
+    formatRelativeDate(document.CreatedAt) ?? 'Date unavailable';
 
   return (
     <View
@@ -42,25 +45,39 @@ export default function DocumentCard({
           styles.heading,
           variant === ViewMode.List && styles.listHeading,
         ]}>
-        <Text numberOfLines={2} style={styles.title}>
-          {document.Title ?? 'Untitled document'}
-        </Text>
-        {variant === ViewMode.List && (
-          <Text style={styles.version}>
-            {document.Version ? `Version ${document.Version}` : 'No version'}
+        <View style={styles.titleRow}>
+          <Text numberOfLines={2} style={styles.title}>
+            {document.Title ?? 'Untitled document'}
           </Text>
+          {variant === ViewMode.List && (
+            <Text style={styles.version}>
+              {document.Version
+                ? `Version ${document.Version}`
+                : 'No version'}
+            </Text>
+          )}
+        </View>
+        {variant === ViewMode.List && (
+          <Text style={styles.relativeDate}>{relativeDate}</Text>
         )}
       </View>
 
       {variant === ViewMode.Grid && (
         <View style={styles.gridFooter}>
-          <Text
-            adjustsFontSizeToFit
-            minimumFontScale={0.8}
-            numberOfLines={1}
-            style={[styles.version, styles.gridVersion]}>
-            {document.Version ? `Version ${document.Version}` : 'No version'}
-          </Text>
+          <View style={styles.gridMetadata}>
+            <Text
+              adjustsFontSizeToFit
+              minimumFontScale={0.8}
+              numberOfLines={1}
+              style={styles.version}>
+              {document.Version
+                ? `Version ${document.Version}`
+                : 'No version'}
+            </Text>
+            <Text numberOfLines={1} style={styles.relativeDate}>
+              {relativeDate}
+            </Text>
+          </View>
           <DocumentShareButton
             document={document}
             style={styles.gridShareButton}

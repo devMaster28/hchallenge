@@ -22,6 +22,9 @@ export default StyleSheet.create({
     minHeight: 118,
   },
   heading: {
+    gap: 2,
+  },
+  titleRow: {
     flexDirection: 'row',
     alignItems: 'baseline',
     flexWrap: 'wrap',
@@ -43,14 +46,19 @@ export default StyleSheet.create({
   version: {
     ...textStyles.caption,
   },
+  relativeDate: {
+    ...textStyles.caption,
+    fontSize: 12,
+    lineHeight: 18,
+  },
   gridFooter: {
-    minHeight: 28,
+    minHeight: 38,
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.sm,
     marginTop: 'auto',
   },
-  gridVersion: {
+  gridMetadata: {
     flex: 1,
   },
   gridShareButton: {
