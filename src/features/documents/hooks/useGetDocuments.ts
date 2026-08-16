@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { parseDocumentsResponse } from '../dto/documentDto';
 import type { Document } from '../models/document';
@@ -9,25 +9,42 @@ import { toError } from '../../../utils/error';
 interface GetDocumentsState {
   response: Document[];
   isLoading: boolean;
+  hasFetched: boolean;
   error: Error | null;
 }
 
 interface UseGetDocumentsResult {
   response: Document[];
   isLoading: boolean;
+  hasFetched: boolean;
   error: Error | null;
   refetch: () => void;
 }
 
-export const useGetDocuments = (): UseGetDocumentsResult => {
+interface UseGetDocumentsOptions {
+  enabled?: boolean;
+}
+
+export const useGetDocuments = ({
+  enabled = true,
+}: UseGetDocumentsOptions = {}): UseGetDocumentsResult => {
   const [state, setState] = useState<GetDocumentsState>({
     response: [],
-    isLoading: true,
+    isLoading: enabled,
+    hasFetched: false,
     error: null,
   });
   const [request, setRequest] = useState(0);
+  const lastHandledRequest = useRef(0);
 
   useEffect(() => {
+    const hasPendingManualRequest = request > lastHandledRequest.current;
+
+    if (!enabled && !hasPendingManualRequest) {
+      return;
+    }
+
+    lastHandledRequest.current = request;
     let active = true;
 
     setState(current => ({ ...current, isLoading: true, error: null }));
@@ -39,6 +56,7 @@ export const useGetDocuments = (): UseGetDocumentsResult => {
           setState({
             response,
             isLoading: false,
+            hasFetched: true,
             error: null,
           });
         }
@@ -48,6 +66,7 @@ export const useGetDocuments = (): UseGetDocumentsResult => {
           setState(current => ({
             ...current,
             isLoading: false,
+            hasFetched: true,
             error: toError(reason),
           }));
         }
@@ -56,7 +75,7 @@ export const useGetDocuments = (): UseGetDocumentsResult => {
     return () => {
       active = false;
     };
-  }, [request]);
+  }, [enabled, request]);
 
   const refetch = useCallback(() => {
     setRequest(current => current + 1);

@@ -37,21 +37,23 @@ export default function DocumentsScreen() {
   const [isAddDocumentOpen, setIsAddDocumentOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const { documents, isHydrating, addLocalDocument, setRemoteDocuments } =
+    useDocuments();
+  const shouldFetchDocuments = !isHydrating && documents.length === 0;
   const {
     response: remoteDocuments,
     isLoading,
+    hasFetched,
     error,
     refetch,
-  } = useGetDocuments();
-  const { documents, isHydrating, addLocalDocument, setRemoteDocuments } =
-    useDocuments();
+  } = useGetDocuments({ enabled: shouldFetchDocuments });
   const { notifications, unreadCount, markAllAsRead } = useNotifications();
 
   useEffect(() => {
-    if (!isLoading && !error) {
+    if (hasFetched && !isLoading && !error) {
       setRemoteDocuments(remoteDocuments);
     }
-  }, [error, isLoading, remoteDocuments, setRemoteDocuments]);
+  }, [error, hasFetched, isLoading, remoteDocuments, setRemoteDocuments]);
 
   useEffect(() => {
     if (!isLoading) {

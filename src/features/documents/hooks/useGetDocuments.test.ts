@@ -42,6 +42,7 @@ describe('useGetDocuments', () => {
 
     // Assert
     expect(result.current.isLoading).toBe(true);
+    expect(result.current.hasFetched).toBe(false);
     expect(result.current.response).toEqual([]);
     expect(getMock).toHaveBeenCalledWith(endpoints.documents);
 
@@ -64,6 +65,7 @@ describe('useGetDocuments', () => {
       },
     ]);
     expect(result.current.error).toBeNull();
+    expect(result.current.hasFetched).toBe(true);
   });
 
   it('exposes request errors and finishes loading', async () => {
@@ -126,5 +128,39 @@ describe('useGetDocuments', () => {
     expect(result.current.response).toEqual([
       expect.objectContaining({ ID: 'document-2', Title: 'Forecast' }),
     ]);
+  });
+
+  it('waits for an explicit refetch when automatic fetching is disabled', async () => {
+    // Arrange
+    const request = createDeferred<unknown>();
+    getMock.mockReturnValue(request.promise);
+
+    // Act
+    const { result } = await renderHook(() =>
+      useGetDocuments({ enabled: false }),
+    );
+
+    // Assert
+    expect(getMock).not.toHaveBeenCalled();
+    expect(result.current.isLoading).toBe(false);
+    expect(result.current.hasFetched).toBe(false);
+
+    // Act
+    await act(async () => {
+      result.current.refetch();
+    });
+
+    // Assert
+    expect(getMock).toHaveBeenCalledWith(endpoints.documents);
+    expect(result.current.isLoading).toBe(true);
+
+    // Act
+    await act(async () => {
+      request.resolve([firstDocumentResponse]);
+    });
+
+    // Assert
+    await waitFor(() => expect(result.current.hasFetched).toBe(true));
+    expect(result.current.response[0]?.ID).toBe('document-1');
   });
 });

@@ -1,38 +1,65 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import { parseDocumentDto } from '../../features/documents/dto/documentDto';
+import type { Document } from '../../features/documents/models/document';
 import type {
   DocumentsStorageService,
   StoredDocuments,
 } from './DocumentsStorageService';
 
 const DOCUMENTS_STORAGE_KEY = '@documents';
+const DOCUMENTS_STORAGE_VERSION = 1;
 
-const emptyDocuments: StoredDocuments = {
+interface StoredDocumentsPayload extends StoredDocuments {
+  version: typeof DOCUMENTS_STORAGE_VERSION;
+}
+
+const createEmptyDocuments = (): StoredDocuments => ({
   localDocuments: [],
   remoteDocuments: [],
-};
+});
 
-const isDocumentArray = (
+const parseStoredDocumentArray = (
   value: unknown,
-): value is StoredDocuments['localDocuments'] =>
-  Array.isArray(value) &&
-  value.every(
-    document =>
-      typeof document === 'object' &&
-      document !== null &&
-      !Array.isArray(document),
-  );
-
-const isStoredDocuments = (value: unknown): value is StoredDocuments => {
-  if (typeof value !== 'object' || value === null || Array.isArray(value)) {
-    return false;
+  property: string,
+): Document[] => {
+  if (!Array.isArray(value)) {
+    return [];
   }
 
-  const documents = value as Record<string, unknown>;
-  return (
-    isDocumentArray(documents.localDocuments) &&
-    isDocumentArray(documents.remoteDocuments)
-  );
+  return value.flatMap((document, index) => {
+    try {
+      return [parseDocumentDto(document, `${property}[${index}]`)];
+    } catch {
+      return [];
+    }
+  });
+};
+
+const parseStoredDocuments = (value: unknown): StoredDocuments => {
+  if (typeof value !== 'object' || value === null || Array.isArray(value)) {
+    return createEmptyDocuments();
+  }
+
+  const payload = value as Record<string, unknown>;
+
+  const isLegacyPayload = payload.version === undefined;
+  const isCurrentPayload = payload.version === DOCUMENTS_STORAGE_VERSION;
+
+  if (!isLegacyPayload && !isCurrentPayload) {
+    return createEmptyDocuments();
+  }
+
+  return {
+    localDocuments: parseStoredDocumentArray(
+      payload.localDocuments,
+      'localDocuments',
+    ),
+    remoteDocuments: parseStoredDocumentArray(
+      payload.remoteDocuments,
+      'remoteDocuments',
+    ),
+  };
 };
 
 export const asyncStorageDocumentsService: DocumentsStorageService = {
@@ -40,22 +67,22 @@ export const asyncStorageDocumentsService: DocumentsStorageService = {
     const storedValue = await AsyncStorage.getItem(DOCUMENTS_STORAGE_KEY);
 
     if (!storedValue) {
-      return emptyDocuments;
+      return createEmptyDocuments();
     }
 
-    const documents: unknown = JSON.parse(storedValue);
-
-    if (!isStoredDocuments(documents)) {
-      throw new Error('Invalid documents stored locally');
+    try {
+      return parseStoredDocuments(JSON.parse(storedValue));
+    } catch {
+      return createEmptyDocuments();
     }
-
-    return documents;
   },
 
   async saveDocuments(documents) {
-    await AsyncStorage.setItem(
-      DOCUMENTS_STORAGE_KEY,
-      JSON.stringify(documents),
-    );
+    const payload: StoredDocumentsPayload = {
+      version: DOCUMENTS_STORAGE_VERSION,
+      ...documents,
+    };
+
+    await AsyncStorage.setItem(DOCUMENTS_STORAGE_KEY, JSON.stringify(payload));
   },
 };

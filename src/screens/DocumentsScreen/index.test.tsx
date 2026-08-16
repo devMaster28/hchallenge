@@ -13,7 +13,10 @@ import type {
   RealtimeHandlers,
   RealtimeService,
 } from '../../services/realtime';
-import type { DocumentsStorageService } from '../../services/storage';
+import type {
+  DocumentsStorageService,
+  StoredDocuments,
+} from '../../services/storage';
 import DocumentsScreen from './index';
 
 jest.mock('../../services/network/Api', () => ({
@@ -70,11 +73,15 @@ const createDeferred = <Value,>() => {
   return { promise, resolve };
 };
 
-const createStorageService = (): jest.Mocked<DocumentsStorageService> => ({
-  getDocuments: jest.fn().mockResolvedValue({
-    localDocuments: [],
-    remoteDocuments: [],
-  }),
+const emptyStoredDocuments: StoredDocuments = {
+  localDocuments: [],
+  remoteDocuments: [],
+};
+
+const createStorageService = (
+  storedDocuments: StoredDocuments = emptyStoredDocuments,
+): jest.Mocked<DocumentsStorageService> => ({
+  getDocuments: jest.fn().mockResolvedValue(storedDocuments),
   saveDocuments: jest.fn().mockResolvedValue(undefined),
 });
 
@@ -138,8 +145,10 @@ function TestApp({
   );
 }
 
-const renderDocumentsScreen = async () => {
-  const storageService = createStorageService();
+const renderDocumentsScreen = async (
+  storedDocuments: StoredDocuments = emptyStoredDocuments,
+) => {
+  const storageService = createStorageService(storedDocuments);
   const realtime = createRealtimeService();
   const localNotificationsService = createLocalNotificationsService();
   const screen = await render(
@@ -217,10 +226,11 @@ describe('DocumentsScreen', () => {
   it('refreshes and replaces the remote documents', async () => {
     // Arrange
     const refreshRequest = createDeferred<unknown>();
-    getMock
-      .mockResolvedValueOnce([olderDocument])
-      .mockReturnValueOnce(refreshRequest.promise);
-    const screen = await renderDocumentsScreen();
+    getMock.mockReturnValue(refreshRequest.promise);
+    const screen = await renderDocumentsScreen({
+      localDocuments: [],
+      remoteDocuments: [olderDocument],
+    });
     await waitFor(() =>
       expect(screen.getByText('Alpha report')).toBeOnTheScreen(),
     );
@@ -234,12 +244,15 @@ describe('DocumentsScreen', () => {
       return refreshControl;
     };
 
+    // Assert
+    expect(getMock).not.toHaveBeenCalled();
+
     // Act
     const refreshControl = getRefreshControl();
     await fireEvent(refreshControl, 'refresh');
 
     // Assert
-    expect(getMock).toHaveBeenCalledTimes(2);
+    expect(getMock).toHaveBeenCalledTimes(1);
     expect(screen.getByText('Alpha report')).toBeOnTheScreen();
 
     // Act
